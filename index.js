@@ -1,10 +1,10 @@
 import readline from 'readline';
 
-// import express from 'express';
+import express from 'express';
 import ngrok from 'ngrok';
 import { createManagementClient } from '@kentico/kontent-management';
 
-function getTunnelAddress(config) {
+function getHostAddress(config) {
   const port = config.port ?? 8000; // Port value or default to 8000
   const addr = config.addr ?? port;
   if (typeof addr === 'function') {
@@ -16,7 +16,7 @@ function getTunnelAddress(config) {
 
 async function startNgrok(config) {
   // start and wait for Ngrok
-  const tunnel = getTunnelAddress(config);
+  const tunnel = getHostAddress(config);
   const ngrokArg = typeof tunnel === 'number' ? tunnel : { addr: tunnel };
   console.log(`Starting ngrok with argument '${tunnel}'`)
   const url = await ngrok.connect(ngrokArg);
@@ -95,6 +95,20 @@ function startExpressServer(config) {
     // await ngrok.disconnect();
 }
 
+function getConfigPath() {
+  const configArg = process.argv.find(arg => arg.includes('--config='));
+  const defaultConfigPath = './kcet.config.js';
+  
+  if (configArg) {
+    return configArg
+      .substring(configArg.indexOf('=') + 1)
+      .trim(`"`)
+      .trim(`'`) || defaultConfigPath;
+  }
+
+  return defaultConfigPath;
+}
+
 async function main(config) {
   // TODO: Validate conig...
 
@@ -112,20 +126,6 @@ async function main(config) {
     // Disconnect Ngrok
     await ngrok.disconnect();
   }
-}
-
-function getConfigPath() {
-  const configArg = process.argv.find(arg => arg.includes('--config='));
-  const defaultConfigPath = './kcet.config.js';
-  
-  if (configArg) {
-    return configArg
-      .substring(configArg.indexOf('=') + 1)
-      .trim(`"`)
-      .trim(`'`) || defaultConfigPath;
-  }
-
-  return defaultConfigPath;
 }
 
 const configPath = getConfigPath();
