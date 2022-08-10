@@ -12,10 +12,14 @@ If there is no model with the specified Kontent.ai codename, one will be created
 NOTE: Even though this utility does create the Content *Model*, you will need to create the Content *Item*.
 
 # Setup
-Run `npm install`
+First, make sure to have `Node`/`NPM` installed on your system.
+
+Then, after cloning this repo, navigate to the repo root and run `npm install` to install the depedencies.
 
 # Configuration
 The configuration file allows a few different options for configuring a server and ngrok tunnel. The file should be a Javascript file that `exports` the configuration object.
+
+NOTE: there is a sample config file/object included in `kcet.config.js` that you can fill out and/or copy and use with the `--config` option (see below).
 
 ### `addr` (OPTIONAL)
 If `addr` property is present in the config object it will be used as an argument to ngrok
