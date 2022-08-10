@@ -15,7 +15,7 @@ NOTE: Even though this utility does create the Content *Model*, you will need to
 Run `npm install`
 
 # Configuration
-The configuration file allows a few different options for configuring a server and ngrok tunnel
+The configuration file allows a few different options for configuring a server and ngrok tunnel. The file should be a Javascript file that `exports` the configuration object.
 
 ### `addr` (OPTIONAL)
 If `addr` property is present in the config object it will be used as an argument to ngrok
