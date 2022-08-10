@@ -119,7 +119,7 @@ async function main(config) {
   //  - open browser and navigate to custom element instance
 
   if (config.express && config.express.staticFilesPath) {
-    startExpressServer();
+    startExpressServer(config);
   } else {
     await waitForInput();
 
