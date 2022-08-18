@@ -1,4 +1,5 @@
 import readline from 'readline';
+import fs from 'fs';
 
 import express from 'express';
 import ngrok from 'ngrok';
@@ -17,7 +18,7 @@ function getHostAddress(config) {
 async function startNgrok(config) {
   // start and wait for Ngrok
   const tunnel = getHostAddress(config);
-  const ngrokArg = typeof tunnel === 'number' ? tunnel : { addr: tunnel };
+  const ngrokArg = typeof tunnel === 'string' ? { addr: tunnel } : tunnel;
   console.log(`Starting ngrok with argument '${tunnel}'`)
   const url = await ngrok.connect(ngrokArg);
 
@@ -43,23 +44,26 @@ function waitForInput() {
 }
 
 async function createOrUpdateKontent(ngrokUrl, config) {
+  // Get elementCodename or default from config
+  const elementCodename = config.elementCodename || 'custom_element';
+  
   // create and/or update custom element type with new properties
-  console.log(`Creating or updating custom element test model '${config.kontent.elementCodename}'`);
+  console.log(`Creating or updating custom element test model '${config.kontent.modelCodename}'`);
   const client = createManagementClient({ projectId: config.kontent.projectId, apiKey: config.kontent.apiKey });
   const types = await client.listContentTypes().toPromise();
-  if (!types.data.items.some((type) => type.codename === config.kontent.elementCodename)) {
+  if (!types.data.items.some((type) => type.codename === config.kontent.modelCodename)) {
     await client.addContentType()
       .withData((builder) => {
         return {
           name: 'Custom Element Tester',
-          codename: config.kontent.elementCodename,
+          codename: config.kontent.modelCodename,
           elements: [
             builder.customElement({
               name: 'Custom Element',
               type: 'custom',
               source_url: ngrokUrl,
               json_parameters: "",
-              codename: 'custom_element',
+              codename: elementCodename,
             }),
           ],
         };
@@ -67,11 +71,11 @@ async function createOrUpdateKontent(ngrokUrl, config) {
       .toPromise();
   } else {
     await client.modifyContentType()
-      .byTypeCodename(config.kontent.elementCodename)
+      .byTypeCodename(config.kontent.modelCodename)
       .withData([
         {
           op: 'replace',
-          path: '/elements/codename:custom_element/source_url',
+          path: `/elements/codename:${elementCodename}/source_url`,
           value: ngrokUrl,
         },
       ])
@@ -109,6 +113,15 @@ function getConfigPath() {
   return defaultConfigPath;
 }
 
+function validateConfigFile(filePath) {
+  if (!fs.existsSync(path)) {
+    console.log(`Config file ${filePath} does not exist.`)
+    return false;
+  }
+
+  return true;
+}
+
 async function main(config) {
   // TODO: Validate conig...
 
@@ -129,5 +142,8 @@ async function main(config) {
 }
 
 const configPath = getConfigPath();
-const { default: config } = await import(configPath);
-main(config);
+
+if (validateConfigFile(configPath)) {
+  const { default: config } = await import(configPath);
+  await main(config);
+}

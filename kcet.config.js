@@ -1,6 +1,6 @@
 const config = {
   // [ Optional ] Address can be a strint or function in the form '(portNumber) => finalAddressAsString'
-  // DEFAULT: '' 
+  // DEFAULT: NULL
   // addr: port => `https://localhost:${port}`,
   
   // [ Optional ] Port number
@@ -17,7 +17,10 @@ const config = {
   kontent: {
     projectId: "",
     apiKey: "",
-    elementCodename: "custom_element_test" // Kontent.ai Model codename (alphanumeric and underscrore characters)
+    modelCodename: "", // Kontent.ai Model codename (alphanumeric and underscrore characters)
+    // [OPTIONAL]
+    // DEFAULT: 'custom_element'
+    // elementCodename: Kontent.ai element codename (alphanumeric and underscore characters)
   }
 }
 
