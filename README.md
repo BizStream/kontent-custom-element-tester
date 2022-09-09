@@ -1,5 +1,5 @@
-# kontent-custom-element-tester
-Make testing Kontent.ai custom elements a little easier by doing the following:
+# Kontent.ai Custom Element Tester
+Make local development and testing Kontent.ai Custom Elements a little easier by doing the following:
 
 1. Use a running service for hosting the Custom Element
   - Specify an address or port to use one already running (ex. for React apps, etc.)
